@@ -23,23 +23,27 @@ public class BookListServlet extends HttpServlet {
 		String subject=request.getParameter("subject");
 		PrintWriter out=response.getWriter();
 		try{
-//		Class.forName("com.mysql.jdbc.Driver");
-		Connection con=new Test(request.getServletContext()).getData();
-		String sql="SELECT bcode,title from books where subject=?";
-		PreparedStatement ps=con.prepareStatement(sql);
-		ps.setString(1, subject);
-		ResultSet rs=ps.executeQuery();
+//	
+		
 		out.println("<html>");
 		out.println("<html><body>");
 		out.println("<h3>Select The Desired Title</h3>");
 		out.println("<hr>");
-		while(rs.next()){
-			String code=rs.getString(1);
-			String title=rs.getString(2);
+		Connection con = new Test(request.getServletContext()).getData();
+		String sql = "select * from books where subject=?";
+		String str[] = request.getParameterValues("books");
+		PreparedStatement st =con.prepareStatement(sql);
+		for(String s :str){
+			st.setString(1,s);
+			ResultSet rs = st.executeQuery();
+			while(rs.next()){
+			response.getWriter().println("<a href=BookDetailsServlet?code="+rs.getString(1)+">");
+			response.getWriter().println(rs.getString(2));
+			response.getWriter().println("</a>");
+			response.getWriter().println("<br>");
 			
-			out.println("<a href=BookDetailsServlet?code="+code+">");
-			out.println(title);
-			out.println("</a><br>");
+			}
+			
 		}
 		out.println("<hr>");
 		out.println("<a href=SubjectPageServlet>Subject-Page</a>");
